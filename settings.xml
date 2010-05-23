@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="settings.xsl"?>
+<config-settings>
+  <common>
+    <compressionLevel>9</compressionLevel>
+    <customIcon0>Default - 80x80</customIcon0>
+    <customPic0>Pic - Width</customPic0>
+    <customPic1>Pic - Width</customPic1>
+    <customBoot>Pic - Width</customBoot>
+    <useDataPSP>1</useDataPSP>
+    <custom-images-for-PBP>0</custom-images-for-PBP>
+    <remove-region>1</remove-region>
+  </common>
+  <default-folders>
+    <input-ISO_PBP>/media/disk/PSP/GAME</input-ISO_PBP>
+    <output-ISO_PBP/>
+    <image_sound></image_sound>
+  </default-folders>
+  <default-image_sound-files>
+    <icon0/>
+    <icon1/>
+    <pic0/>
+    <pic1/>
+    <snd0/>
+    <boot/>
+  </default-image_sound-files>
+</config-settings>

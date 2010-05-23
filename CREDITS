@@ -1,0 +1,8 @@
+Credits for MyPopstation
+
+Dark_Alex - For the popstation source which is where ISO files are converted to EBOOTS
+            Also for his custom firmware
+SeattleMan(www.sonyindex.com) - The popstation GUI game database
+flatwhatson - For the popstrip extract source code which allows extraction of EBOOTS to ISO files
+KingSquitter - His PSX2PSP 1.4.2 gave me a reference to make sure that the code is in working order
+               Also as a source of requirements for this project, which is one of the reasons it has so many features
