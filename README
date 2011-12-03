@@ -1,0 +1,11 @@
+SodaPopstation
+Author: Derric McGarrah
+
+General Information:
+SodaPopStation is a Cross-Platform Popstation for converting Playstation 1 disc to PSP EBOOTS and vice-versa.
+SodaPopstation also allows users to add their own images and sounds to their EBOOT.
+
+It was created using wxWidgets-2.9.1 and C++ for Linux and Windows(and Mac if you can get it to compile). 
+
+Updates and Revisions 
+0.10 First Version
