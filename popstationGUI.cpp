@@ -1,9 +1,6 @@
 #include "popstationGUI.h"
-#include "wx/wx.h"
-#include "wx/gbsizer.h"
-#include <wx/xml/xml.h>
-#include "wx/filename.h"
-#include "wx/filefn.h"
+#include "gameData.h"
+#include "config.h"
 #include "popstrip.h"
 #include "popstation.h"
 
@@ -29,19 +26,22 @@ END_EVENT_TABLE()
 popFrame::popFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size
         , long style)
 : wxFrame((wxFrame*) parent, id, title, pos, size, style) {
-
+    windowWithFocus=wxNOT_FOUND;
     gdDialog = new gameDataDialog(this, ID_gdDialog, wxS("Select a Game"), wxPoint(25, 25), wxSize(500, 550));
     MyNotebook = new wxNotebook(this, wxID_ANY, wxPoint(-1, -1), wxSize(600, 400), wxNB_DEFAULT);
-
+	
     //Checks setting files
-    configProcessing(wxS("settings.xml"));
-    configCheck();
+    //TODO
+    confPanel=new configPanel(MyNotebook,ID_cfPanel,wxDefaultPosition,wxSize(600,400),wxTAB_TRAVERSAL);
+    
+    configoptions=confPanel->Read();
     MainPage();
     ExtraPage();
     AboutPage();
     
     MyNotebook->AddPage(MyPanel, wxS("Convert"), true);
     MyNotebook->AddPage(ExtraPanel, wxS("Custom"), false);
+    MyNotebook->AddPage(confPanel,wxS("Config"),false);
     MyNotebook->AddPage(AboutPanel, wxS("About"), false);
     //wxPrintf("%s", configoptions.defaultImgSndFolder.c_str());
 }
@@ -49,7 +49,7 @@ popFrame::popFrame(wxWindow* parent, wxWindowID id, const wxString& title, const
 void popFrame::MainPage() {
 
     MyPanel = new wxPanel(MyNotebook, wxID_ANY, wxPoint(-1, -1), wxSize(600, 400), wxTAB_TRAVERSAL);
-    infileDialog = new wxFileDialog(MyPanel, wxS("Select an PS format file"), configoptions.defaultInputFolder, wxS(""), wxS("PS files(*.iso;*.PBP;*.bin;*.img)|*.iso;*.ISO;*.pbp;*.PBP;*.bin;*.BIN;*.img;*.IMG|All Files|*.*"), wxOPEN);
+    infileDialog = new wxFileDialog(MyPanel, wxS("Select an PS format file"), configoptions.defaultInputFolder, wxS(""), wxS("PS files(*.iso;*.PBP;*.bin;*.img)|*.iso;*.ISO;*.pbp;*.PBP;*.bin;*.BIN;*.img;*.IMG|All Files|*.*"), wxFD_OPEN);
     outFolderDialog = new wxDirDialog(MyPanel, wxS("Choose a Folder"), configoptions.defaultOutputFolder);
     Desc1 = new wxStaticText(MyPanel, ID_Desc1, wxS("Input ISO/PBP"), wxPoint(15, 20), wxDefaultSize, 0);
     Desc2 = new wxStaticText(MyPanel, ID_Desc2, wxS("Output ISO/PBP"), wxPoint(310, 20), wxDefaultSize, 0);
@@ -148,17 +148,17 @@ void popFrame::ExtraPage() {
     buttonIconA = new wxButton(ExtraPanel, ID_buttonIconA, wxS("..."), wxDefaultPosition, wxSize(30, 30));
     buttonBootI = new wxButton(ExtraPanel, ID_buttonBootI, wxS("..."), wxDefaultPosition, wxSize(30, 30));
     fileIconI = new wxFileDialog(ExtraPanel, wxS("ICON0.png"), configoptions.defaultImgSndFolder, wxEmptyString,
-            wxS("PNG file(*.png)|*.png;*.PNG|All Files|*"), wxOPEN);
+            wxS("PNG file(*.png)|*.png;*.PNG|All Files|*"), wxFD_OPEN);
     fileBackI = new wxFileDialog(ExtraPanel, wxS("PIC1.png"), configoptions.defaultImgSndFolder, wxEmptyString,
-            wxS("PNG file(*.png)|*.png;*.PNG|All Files|*"), wxOPEN);
+            wxS("PNG file(*.png)|*.png;*.PNG|All Files|*"), wxFD_OPEN);
     fileInfoI = new wxFileDialog(ExtraPanel, wxS("PIC0.png"), configoptions.defaultImgSndFolder, wxEmptyString,
-            wxS("PNG file(*.png)|*.png;*.PNG|All Files|*"), wxOPEN);
+            wxS("PNG file(*.png)|*.png;*.PNG|All Files|*"), wxFD_OPEN);
     fileBackM = new wxFileDialog(ExtraPanel, wxS("SND0.AT3"), configoptions.defaultImgSndFolder, wxEmptyString,
-            wxS("AT3 file(*.at3)|*.at3;*.AT3|All Files|*"), wxOPEN);
+            wxS("AT3 file(*.at3)|*.at3;*.AT3|All Files|*"), wxFD_OPEN);
     fileIconA = new wxFileDialog(ExtraPanel, wxS("ICON1.pmf"), configoptions.defaultImgSndFolder, wxEmptyString,
-            wxS("PMF file(*.pmf)|*.pmf;*.PMF|All Files|*"), wxOPEN);
+            wxS("PMF file(*.pmf)|*.pmf;*.PMF|All Files|*"), wxFD_OPEN);
     fileBootI = new wxFileDialog(ExtraPanel, wxS("BOOT.png"), configoptions.defaultImgSndFolder, wxEmptyString,
-            wxS("PNG file(*.png)|*.png;*.PNG|All Files|*"), wxOPEN);
+            wxS("PNG file(*.png)|*.png;*.PNG|All Files|*"), wxFD_OPEN);
     IconImage->Add(textIconI, 10, wxEXPAND);
     IconImage->Add(buttonIconI, 1, wxSHAPED);
     BackImage->Add(textBackI, 10, wxEXPAND);
@@ -181,11 +181,11 @@ void popFrame::ExtraPage() {
 }
 void popFrame::AboutPage(){
     AboutPanel=new wxPanel(MyNotebook, wxID_ANY,wxDefaultPosition,wxSize(600,400),wxTAB_TRAVERSAL);
-    AboutText=new wxStaticText(AboutPanel, ID_AboutText,"",wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
-    AboutText->SetLabel("Credits:\n\nDark_Alex - For the popstation source for conversion of PSX files\n\
+    AboutText=new wxStaticText(AboutPanel, ID_AboutText,wxS(""),wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+    AboutText->SetLabel(wxS("Credits:\n\nDark_Alex - For the popstation source for conversion of PSX files\n\
 SeattleMan(www.sonyindex.com) - The popstation GUI game database\n\
 flatwhatson - For the popstrip extract source code which allows extraction of EBOOTS\n\
-KingSquitter - His PSX2PSP source code for popsation and popstrip helped immensely\n");
+KingSquitter - His PSX2PSP source code for popsation and popstrip helped immensely\n"));
 }
 
 void popFrame::onPSButton(wxCommandEvent& WXUNUSED(event)) {
@@ -328,7 +328,7 @@ void popFrame::gameidDetection(const wxString source_file, int CurrentDisc) {
     wxFFile infile;
     char buffer[16];
     wxString filedata, gameid_data;//Filedata is a 32 bit window that holds the previous 16 bytes plus the 16 bytes read in
-    infile.Open(source_file, "rb");
+    infile.Open(source_file, wxS("rb"));
     if (infile.IsOpened() == false)
         return;
     wxArrayString prefixlist = gdDialog->PrefixList();
@@ -366,7 +366,7 @@ void popFrame::gameidDetection(const wxString source_file, int CurrentDisc) {
                 GameIDcode->SetValue(popParm[CurrentDisc].saveIDcode);
                 GameIDnum->SetValue(popParm[CurrentDisc].saveIDnum);
                 if (OutputPBP_tc->IsEmpty())
-                    OutputPBP_tc->SetValue(popParm[CurrentDisc].saveDesc + " " + popParm[CurrentDisc].saveID);
+                    OutputPBP_tc->SetValue(popParm[CurrentDisc].saveDesc + wxS(" ") + popParm[CurrentDisc].saveID);
             }
             DiscTitle->SetValue(popParm[CurrentDisc].gameTitle);
             DiscIDcode->SetValue(popParm[CurrentDisc].gameIDcode);
@@ -397,7 +397,7 @@ void popFrame::onGDialog(wxCommandEvent& WXUNUSED(event)) {
             GameIDcode->SetValue(popParm[CurrentDisc].saveIDcode);
             GameIDnum->SetValue(popParm[CurrentDisc].saveIDnum);
             if (OutputPBP_tc->IsEmpty())
-                OutputPBP_tc->SetValue(popParm[CurrentDisc].saveDesc + " " + popParm[CurrentDisc].saveID);
+                OutputPBP_tc->SetValue(popParm[CurrentDisc].saveDesc + wxS(" ") + popParm[CurrentDisc].saveID);
         }
         DiscTitle->SetValue(popParm[CurrentDisc].gameTitle);
         DiscIDcode->SetValue(popParm[CurrentDisc].gameIDcode);
@@ -407,7 +407,7 @@ void popFrame::onGDialog(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void popFrame::onKeyPress(wxKeyEvent& event) {
-    if (event.GetKeyCode() == WXK_DOWN && PSfiletext->m_hasFocus) {
+    if (event.GetKeyCode() == WXK_DOWN && PSfiletext->GetId()==windowWithFocus) {
         int CurrentDisc = PSfiletext->GetCurrentSelection();
         CurrentDisc = (1 + CurrentDisc) % 5;
         PSfiletext->SetSelection(CurrentDisc);
@@ -415,7 +415,7 @@ void popFrame::onKeyPress(wxKeyEvent& event) {
         DiscIDcode->SetValue(popParm[CurrentDisc].gameIDcode);
         DiscIDnum->SetValue(popParm[CurrentDisc].gameIDnum);
         CompressionSlider->SetValue(popParm[CurrentDisc].compressionLevel);
-    } else if (event.GetKeyCode() == WXK_UP && PSfiletext->m_hasFocus) {
+    } else if (event.GetKeyCode() == WXK_UP && PSfiletext->GetId()==windowWithFocus) {
         int CurrentDisc = PSfiletext->GetCurrentSelection();
         CurrentDisc--;
         if (CurrentDisc < 0)
@@ -426,18 +426,18 @@ void popFrame::onKeyPress(wxKeyEvent& event) {
         DiscIDcode->SetValue(popParm[CurrentDisc].gameIDcode);
         DiscIDnum->SetValue(popParm[CurrentDisc].gameIDnum);
         CompressionSlider->SetValue(popParm[CurrentDisc].compressionLevel);
-    } else if (event.GetKeyCode() == WXK_DELETE && PSfiletext->m_hasFocus) {
+    } else if (event.GetKeyCode() == WXK_DELETE && PSfiletext->GetId()==windowWithFocus) {
         int CurrentDisc = PSfiletext->GetCurrentSelection();
         if (CurrentDisc > 0) {
-            int answer = wxMessageBox("Would you like to remove " + FileSelection[CurrentDisc], "Disc Removal", wxYES_NO | wxNO_DEFAULT);
+            int answer = wxMessageBox(wxS("Would you like to remove ") + FileSelection[CurrentDisc], wxS("Disc Removal"), wxYES_NO | wxNO_DEFAULT);
             if (answer == wxYES) {
                 FileSelection[CurrentDisc] = wxEmptyString;
-                PSfiletext->SetString(CurrentDisc, wxString::Format("Disc %i - No File Selected", CurrentDisc + 1));
+                PSfiletext->SetString(CurrentDisc, wxString::Format(wxS("Disc %i - No File Selected"), CurrentDisc + 1));
                 DiscTitle->SetValue(wxEmptyString);
                 DiscIDcode->SetValue(wxEmptyString);
                 DiscIDnum->SetValue(wxEmptyString);
                 CompressionSlider->SetValue(configoptions.compressionLevel);
-                gameData tempinfo = {"", "", "", "", "", "", "", "", "", configoptions.compressionLevel};
+                gameData tempinfo = {wxS(""),wxS(""),wxS(""),wxS(""),wxS(""),wxS(""),wxS(""),wxS(""),wxS(""), configoptions.compressionLevel};
                 popParm[CurrentDisc] = tempinfo;
             }
         }
@@ -577,81 +577,7 @@ void popFrame::onExtract(wxCommandEvent& event) {
 
 }
 
-void popFrame::configProcessing(wxString docname) {
-    wxXmlDocument doc;
-    if (!doc.Load(docname))
-        return;
-    if (doc.GetRoot()->GetName() != wxS("config-settings"))
-        return;
-    wxXmlNode *config = doc.GetRoot()->GetChildren();
-    while (config) {
-        if (config->GetName() == wxS("common")) {
-            wxXmlNode *option = config->GetChildren();
-            while (option) {
-                if (option->GetName() == wxS("compressionLevel"))
-                    configoptions.compressionLevel = wxAtoi(option->GetNodeContent());
-                else if (option->GetName() == wxS("customIcon0"))
-                    configoptions.customIcon0 = option->GetNodeContent();
-                else if (option->GetName() == wxS("customPic0"))
-                    configoptions.customPic0 = option->GetNodeContent();
-                else if (option->GetName() == wxS("customPic1"))
-                    configoptions.customPic1 = option->GetNodeContent();
-                else if (option->GetName() == wxS("customBoot"))
-                    configoptions.customBoot = option->GetNodeContent();
-                else if (option->GetName() == wxS("useDataPSP"))
-                    configoptions.useDataPSP = wxAtoi(option->GetNodeContent());
-                else if (option->GetName() == wxS("custom-images-for-PBP"))
-                    configoptions.custImgPBP = wxAtoi(option->GetNodeContent());
-                else if (option->GetName() == wxS("remove-region"))
-                    configoptions.rmRegion = wxAtoi(option->GetNodeContent());
-                option = option->GetNext();
-            }
-        } else if (config->GetName() == wxS("default-folders")) {
-            wxXmlNode *option = config->GetChildren();
-            while (option) {
-                if (option->GetName() == wxS("input-ISO_PBP"))
-                    configoptions.defaultInputFolder = option->GetNodeContent();
-                else if (option->GetName() == wxS("output-ISO_PBP"))
-                    configoptions.defaultOutputFolder = option->GetNodeContent();
-                else if (option->GetName() == wxS("image_sound"))
-                    configoptions.defaultImgSndFolder = option->GetNodeContent();
-                option = option->GetNext();
-            }
-
-        } else if (config->GetName() == wxS("default-image_sound-files")) {
-            wxXmlNode *option = config->GetChildren();
-            while (option) {
-                if (option->GetName() == wxS("icon0"))
-                    configoptions.icon0file = option->GetNodeContent();
-                else if (option->GetName() == wxS("icon1"))
-                    configoptions.icon1file = option->GetNodeContent();
-                else if (option->GetName() == wxS("pic0"))
-                    configoptions.pic0file = option->GetNodeContent();
-                else if (option->GetName() == wxS("pic1"))
-                    configoptions.pic1file = option->GetNodeContent();
-                else if (option->GetName() == wxS("snd0"))
-                    configoptions.snd0file = option->GetNodeContent();
-                else if (option->GetName() == wxS("boot"))
-                    configoptions.bootfile = option->GetNodeContent();
-
-                option = option->GetNext();
-            }
-
-        }
-        config = config->GetNext();
-    }
-    //doc.Save(docname);
-}
-
-void popFrame::configCheck() {
-    if (configoptions.compressionLevel < 0 || configoptions.compressionLevel > 9)
-        configoptions.compressionLevel = 0;
-    if (configoptions.useDataPSP != 0)
-        configoptions.useDataPSP = 1;
-    if (!wxDirExists(configoptions.defaultInputFolder))
-        configoptions.defaultInputFolder = wxEmptyString;
-    if (!wxDirExists(configoptions.defaultOutputFolder))
-        configoptions.defaultOutputFolder = wxEmptyString;
-    if (!wxDirExists(configoptions.defaultImgSndFolder))
-        configoptions.defaultImgSndFolder = wxEmptyString;
+void popFrame::focusFind(wxFocusEvent& event){
+	windowWithFocus=event.GetId();
+	event.Skip();
 }

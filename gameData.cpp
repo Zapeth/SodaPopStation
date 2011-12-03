@@ -2,6 +2,7 @@
 #include <iterator>
 
 #include "gameData.h"
+
 #include "wx/hashset.h"
 
 
@@ -12,6 +13,7 @@ EVT_BUTTON(wxID_OK, gameDataDialog::onOK)
 EVT_TEXT(ID_searchBox, gameDataDialog::SearchUpdate)
 EVT_TEXT_ENTER(ID_searchBox, gameDataDialog::Search)
 EVT_SEARCHCTRL_SEARCH_BTN(ID_searchBox, gameDataDialog::Search)
+EVT_SET_FOCUS(gameDataDialog::setFocus)
 END_EVENT_TABLE()
 
 WX_DECLARE_HASH_SET(wxString, wxStringHash, wxStringEqual, MyPrefix);
@@ -20,6 +22,7 @@ WX_DECLARE_HASH_SET(wxString, wxStringHash, wxStringEqual, MyPrefix);
 gameDataDialog::gameDataDialog(wxWindow* parent, wxWindowID id, const wxString& title,
         const wxPoint& pos, const wxSize& size, long style)
 : wxDialog(parent, id, title, pos, size, style) {
+	windowWithFocus=wxNOT_FOUND;
     selectedInfo = wxNOT_FOUND;
     Desc1 = new wxStaticText(this, ID_Desc1, wxS("Game Title"), wxPoint(0, 20), wxDefaultSize, 0);
     Desc2 = new wxStaticText(this, ID_Desc2, wxS("Game ID"), wxPoint(330, 80), wxDefaultSize, 0);
@@ -28,7 +31,7 @@ gameDataDialog::gameDataDialog(wxWindow* parent, wxWindowID id, const wxString& 
     //line=new wxStaticLine(this,wxID_ANY,wxPoint(0,380),wxSize(-1,-1),wxLI_HORIZONTAL);
 
     gameName = new wxListBox(this, ID_gameTitle, wxPoint(0, 80), wxSize(300, 350),
-            (wxArrayString) NULL, wxLB_SINGLE);
+           wxArrayString(0), wxLB_SINGLE);
 
     gameID = new wxChoice(this, ID_gameID, wxPoint(330, 115), wxSize(75, 30));
     gameNum = new wxTextCtrl(this, ID_gameID, wxS(""), wxPoint(415, 115), wxSize(50, 30), 0, wxTextValidator(wxFILTER_NUMERIC));
@@ -98,7 +101,7 @@ void gameDataDialog::generateGameList() {
         if(fgameID.size()>1)
             gameInfo.gameIDnum.Add(fgameID[1]);
         else
-            gameInfo.gameIDnum.Add("NULL");
+            gameInfo.gameIDnum.Add(wxT("NULL"));
        
         if (SaveSplit.Matches(lineTokenizer[tSaveFolder])) {
 
@@ -158,7 +161,7 @@ void gameDataDialog::onChar(wxKeyEvent& event) {
         if (selection > 0)
             gameID->SetSelection(--selection);
 
-    } else */if (gameName->m_hasFocus) {
+    } else */if (gameName->GetId()==windowWithFocus) {
         wxString text_to_search = (wxChar) event.GetKeyCode();
         int selection = 0;
         selection = gameName->GetSelection();
@@ -181,6 +184,10 @@ void gameDataDialog::onChar(wxKeyEvent& event) {
     event.Skip();
 }
 
+void gameDataDialog::setFocus(wxFocusEvent& event){
+	windowWithFocus=event.GetId();
+	event.Skip();
+}
 void gameDataDialog::Search(wxCommandEvent& event) {
     wxString text_to_search = searchBox->GetValue().Lower();
     int selection = 0;

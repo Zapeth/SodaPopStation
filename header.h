@@ -1,5 +1,9 @@
-#ifndef HEADER_H
-#define HEADER_H
+#ifndef __HEADER_H
+#define __HEADER_H
+
+#include "wx/string.h"
+#include "wx/arrstr.h"
+
 typedef struct{
     wxString saveIDcode;
     wxString saveIDnum;

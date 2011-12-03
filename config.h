@@ -4,6 +4,7 @@
 #include "header.h"
 #include "wx/wx.h"
 #include "wx/fileconf.h"
+#include "wx/spinctrl.h"
 
 class configPanel: public wxPanel
 {

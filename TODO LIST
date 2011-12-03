@@ -1,4 +1,4 @@
 1. Add automatic gameid detection - checked
-2. Add automatic icon1.png creation
+2. Add automatic icon1.png creation - not possible currently
 3. Add config options for default customize image directories - checked
 4. Force Certain Parameters for gameid and save id to be entered - checked

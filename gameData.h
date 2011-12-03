@@ -7,7 +7,6 @@
 #include "wx/tokenzr.h"
 #include "wx/regex.h"
 #include "wx/srchctrl.h"
-#include "wx/hashset.h"
 #include "header.h"
 
 const int num_of_elements_shown_in_LB=14;//Number of Elements shown in Listbox.Used for pageup and pagedown
@@ -35,6 +34,7 @@ public:
     void Search(wxCommandEvent& event);
     void SearchUpdate(wxCommandEvent& event);
     void SearchID(const wxString& searchID, gameData& metaData);
+    void setFocus(wxFocusEvent& event);
     wxArrayString PrefixList();
     wxString getGameIDcode(){return m_gameIDcode;}
     wxString getGameIDnum(){return m_gameIDnum;}
@@ -69,6 +69,7 @@ private:
     wxString m_scannerID;
     int selectedInfo;
     wxSearchCtrl* searchBox; 
+    int windowWithFocus;
     
      enum{
     ID_Desc1=1000,

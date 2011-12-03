@@ -1,15 +1,15 @@
 #define WriteInteger(a, c) \
 	x = a; \
-	for (uint i = 0; i < c; i++) \
+	for (unsigned int i = 0; i < c; i++) \
 		out.Write(&x,4)
 
 #define WriteChar(a, c) \
 	y = a; \
-	for (uint i = 0; i < c; i++) \
+	for (unsigned int i = 0; i < c; i++) \
 		out.Write(&x,1)
 
 #define WriteRandom(c) \
-	for (uint i = 0; i < c; i++) \
+	for (unsigned int i = 0; i < c; i++) \
 	{ \
 		x = rand(); \
 		out.Write(&x,4); \

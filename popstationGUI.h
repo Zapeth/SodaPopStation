@@ -1,9 +1,15 @@
 #ifndef __POPSTATIONGUI_H
 #define __POPSTATIONGUI_H
+
+#include "wx/wx.h"
 #include "wx/notebook.h"
-#include "gameData.h"
+#include "wx/gbsizer.h"
+#include "wx/filename.h"
+#include "wx/filefn.h"
 #include "header.h"
 
+class gameDataDialog;
+class configPanel;
 class popFrame: public wxFrame
 {
 public:
@@ -33,6 +39,7 @@ public:
     void configProcessing(wxString docname);
     void configCheck();
     void gameidDetection(const wxString source_file, int CurrentDisc);
+    void focusFind(wxFocusEvent& event);
 
     DECLARE_EVENT_TABLE()
 private:
@@ -48,7 +55,7 @@ private:
      wxPanel* MyPanel, *ExtraPanel, *AboutPanel;
      wxNotebook* MyNotebook;
      wxSlider* CompressionSlider;
-     wxGridBagSizer* sizer,*ExtraSizer;
+     wxGridBagSizer *sizer,*ExtraSizer;
      //wxMenu *mode;
      wxStaticBoxSizer *IconImage,*BackImage,*InfoImage,*BackMusic,*IconAnim,*BootImage;
      wxFileDialog *fileIconI,*fileBackI,*fileInfoI,*fileBackM,*fileIconA,*fileBootI;
@@ -57,10 +64,11 @@ private:
      wxFileDialog* infileDialog;
      wxDirDialog *outFolderDialog;
      gameData popParm[5];//Parameters for Multidisc support
-     settings configoptions;
+     configPanel* confPanel; 
      wxArrayString FileSelection;
      gameDataDialog* gdDialog;
-};
+     int windowWithFocus;
+	settings configoptions;
 
 enum{
     ID_PSfile=1000,
@@ -105,8 +113,9 @@ enum{
     ID_ConvertButton=1099,
     ID_ExtractISOButton=1100,
     ID_gdDialog=1101,
+    ID_cfPanel=1102,
     ID_AboutText=1200
-    
+};    
 };
 
 

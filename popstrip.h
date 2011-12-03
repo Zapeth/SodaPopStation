@@ -26,8 +26,8 @@ struct FileInfo {
 };
 
 void popstripExtract(wxString input_pbp, wxString output_iso);
-uint popstripInit(INDEX* &iso_index, wxString input_pbp);
-uint popstripReadBlock(INDEX *iso_index, int blockNo, unsigned char *out_buffer);
+unsigned int popstripInit(INDEX* &iso_index, wxString input_pbp);
+unsigned int popstripReadBlock(INDEX *iso_index, int blockNo, unsigned char *out_buffer);
 void popstripFinal(INDEX* &iso_index);
-uint popstripGetIsoSize(INDEX* iso_index);
+unsigned int popstripGetIsoSize(INDEX* iso_index);
 int ExtractIso();

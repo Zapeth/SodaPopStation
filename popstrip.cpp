@@ -78,7 +78,7 @@ int ExtractIso() {
     return 0;
 }
 
-uint popstripReadBlock(INDEX *iso_index, int blockNo, unsigned char *out_buffer) {
+unsigned int popstripReadBlock(INDEX *iso_index, int blockNo, unsigned char *out_buffer) {
     wxFFile pbp_stream;
     unsigned char *in_buffer;
     z_stream z;
@@ -155,7 +155,7 @@ uint popstripReadBlock(INDEX *iso_index, int blockNo, unsigned char *out_buffer)
 /*
  * @ returns number of blocks in PBP file
  */
-uint popstripInit(INDEX* &iso_index, wxString input_pbp) {
+unsigned int popstripInit(INDEX* &iso_index, wxString input_pbp) {
     wxFFile pbp_stream;
 
 
@@ -227,7 +227,7 @@ uint popstripInit(INDEX* &iso_index, wxString input_pbp) {
 
 }
 
-uint popstripGetIsoSize(INDEX* iso_index) {
+unsigned int popstripGetIsoSize(INDEX* iso_index) {
     unsigned char out_buffer[16 * ISO_BLOCK_SIZE];
     int iso_length = 0;
     // The ISO size is contained in the data referenced in index #2

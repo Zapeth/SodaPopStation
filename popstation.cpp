@@ -32,7 +32,7 @@ unsigned int dummy[6];
 int bufferSize;
 unsigned int totSize = 0;
 INDEX *iso_index;
-uint blockCount;//Holds the number of blocks if the source is PBP
+unsigned int blockCount;//Holds the number of blocks if the source is PBP
 
 double progress_perc=0;
 
@@ -110,7 +110,7 @@ void SetSFOTitle(char *sfo, wxString title) {
     int i;
     
     for (i = 0; i < header->nitems; i++) {
-        wxString temp=sfo+header->fields_table_offs + entries[i].field_offs;
+        wxString temp(sfo+header->fields_table_offs + entries[i].field_offs,wxConvISO8859_1);
         if (temp== wxS("TITLE")) {
             char *tempbuf=sfo+header->values_table_offs + entries[i].val_offs; // Might not be MD ok
             memset(tempbuf,0,entries[i].size);
@@ -131,7 +131,7 @@ void SetSFOCode(char *sfo, wxString code) {
     int i;
 
     for (i = 0; i < header->nitems; i++) {
-        wxString temp=sfo+header->fields_table_offs + entries[i].field_offs;
+        wxString temp(sfo+header->fields_table_offs + entries[i].field_offs,wxConvISO8859_1);
         if (temp==wxS("DISC_ID")) {
             char *tempbuf=sfo+header->values_table_offs + entries[i].val_offs; // Might not be MD ok
             memset(tempbuf,0,entries[i].size);
@@ -149,7 +149,7 @@ void SetSFOCode(char *sfo, wxString code) {
 int convertIsoMD() {
     wxFFile in, out, base, t;
     int offset;
-    uint isosize, isorealsize,x;
+    unsigned int isosize, isorealsize,x;
     char y;
     int index_offset, p1_offset, p2_offset, m_offset, end_offset;
     IsoIndex *indexes;
@@ -197,7 +197,7 @@ int convertIsoMD() {
     title = convertInfo.saveTitle;
     code = convertInfo.saveID;
     BASE = convertInfo.base;
-    wxProgressDialog progbar("Converting", "Starting",100,NULL,wxPD_APP_MODAL|wxPD_CAN_ABORT);
+    wxProgressDialog progbar(wxS("Converting"), wxS("Starting"),100,NULL,wxPD_APP_MODAL|wxPD_CAN_ABORT);
     
     base.Open(BASE, wxS("rb"));
     if (base.IsOpened()==false) {
@@ -542,7 +542,7 @@ int convertIsoMD() {
             x = 0;
         }
 
-        for (uint i = 0; i < isosize / 0x9300; i++) {
+        for (unsigned int i = 0; i < isosize / 0x9300; i++) {
             out.Write(&offset, 4);
             out.Write(&x, 4);
             out.Write(dummy, sizeof (dummy));
@@ -565,7 +565,7 @@ int convertIsoMD() {
                 curSize += x;
                 
                 progress_perc=((double)(curSize)/totSize)*100;
-                progbar.Update(progress_perc*((ciso+1)/ndiscs),wxString::Format("Writing iso #%d. %.0f%% done converting:  ",ciso, progress_perc));
+                progbar.Update(progress_perc*((ciso+1)/ndiscs),wxString::Format(wxS("Writing iso #%d. %.0f%% done converting:  "),ciso, progress_perc));
                 if (cancelConvert) {
                     
                     in.Close();
@@ -576,7 +576,7 @@ int convertIsoMD() {
                 }
             }
 
-            for (uint i = 0; i < (isosize - isorealsize); i++) {
+            for (unsigned int i = 0; i < (isosize - isorealsize); i++) {
                 out.Write("\0",1);
             }
         } else {
@@ -590,7 +590,7 @@ int convertIsoMD() {
 		return popstationErrorExit(wxString::Format(wxS("Cannot alloc memory for indexes!\n")));
             }
 
-            uint i = 0;
+            unsigned int i = 0;
             offset = 0;
 
             while ((x = in.Read(buffer2, 0x9300)) > 0) {
@@ -626,7 +626,7 @@ int convertIsoMD() {
                 }
 
                 progress_perc=((double)(curSize)/totSize)*100;
-                progbar.Update(progress_perc*((ciso+1)/ndiscs),wxString::Format("Writing iso #%d. %.0f%% done converting:  ",ciso, progress_perc));
+                progbar.Update(progress_perc*((ciso+1)/ndiscs),wxString::Format(wxS("Writing iso #%d. %.0f%% done converting: "),ciso, progress_perc));
                 if (cancelConvert) {
                     
                     in.Close();
@@ -667,7 +667,7 @@ int convertIsoMD() {
     if ((x % 0x10) != 0) {
         end_offset = x + (0x10 - (x % 0x10));
 
-        for (uint i = 0; i < (end_offset - x); i++) {
+        for (unsigned int i = 0; i < (end_offset - x); i++) {
             out.Write("0",1);
         }
     } else {
@@ -677,7 +677,7 @@ int convertIsoMD() {
     end_offset -= header[9];
 
     printf("Writing special data...\n");
-    progbar.Update(99,wxString::Format("Writing special data..."));
+    progbar.Update(99,wxString::Format(wxS("Writing special data...")));
     base.Seek(base_header[9] + 12,wxFromStart);
     base.Read(&x, 4);
 
@@ -703,7 +703,7 @@ int convertIsoMD() {
         out.Write(buffer, header[1]);
     } else {
         printf("Writing boot.png...\n");
-        progbar.Update(99,wxString::Format("Writing boot.png..."));
+        progbar.Update(99,wxString::Format(wxS("Writing boot.png...")));
         ib[5] = boot_size;
         out.Write(buffer, header[0]);
         t.Open(convertInfo.boot, wxS("rb"));
@@ -731,15 +731,15 @@ int convertIsoMD() {
     out.Close();
     base.Close();
 
-    progbar.Update(100,"Conversion Complete");
+    progbar.Update(100,wxS("Conversion Complete"));
     progbar.EndModal(wxID_OK);
-    wxPrintf("Done\n");
+    printf("Done\n");
     return 0;
 }
 
 int convertIso() {
     wxFFile in, out, base, t;
-    uint offset, isosize, isorealsize;
+    unsigned int offset, isosize, isorealsize;
     int x;
     int index_offset, p1_offset, p2_offset, end_offset;
     IsoIndex *indexes;
@@ -758,7 +758,7 @@ int convertIso() {
     output = convertInfo.dstPBP;
     
     complevel = convertInfo.compLevel;
-    wxProgressDialog progbar("Converting", "Starting",100,NULL,wxPD_APP_MODAL|wxPD_CAN_ABORT);
+    wxProgressDialog progbar(wxS("Converting"), wxS("Starting"),100,NULL,wxPD_APP_MODAL|wxPD_CAN_ABORT);
 
     in.Open(input, wxS("rb"));
     if (in.IsOpened()==false) {
@@ -787,7 +787,7 @@ int convertIso() {
     isorealsize = isosize;
     
     
-    cancelConvert=!progbar.Update(0,wxString::Format("ISO Size %i",isosize));
+    cancelConvert=!progbar.Update(0,wxString::Format(wxS("ISO Size %i"),isosize));
     if ((isosize % 0x9300) != 0) {
         isosize = isosize + (0x9300 - (isosize % 0x9300));
     }
@@ -1015,7 +1015,7 @@ int convertIso() {
 
     offset = out.Tell();
 
-    for (uint i = 0; i < header[9] - offset; i++) {
+    for (unsigned int i = 0; i < header[9] - offset; i++) {
         out.Write("\0",1);
     }
 
@@ -1029,7 +1029,7 @@ int convertIso() {
     out.Write(&x, 4);
 
     x = 0;
-    for (uint i = 0; i < 0xFC; i++) {
+    for (unsigned int i = 0; i < 0xFC; i++) {
         out.Write(&x,4);
     }
 
@@ -1071,7 +1071,7 @@ int convertIso() {
         x = 0;
     }
 
-    for (uint i = 0; i < isosize / 0x9300; i++) {
+    for (unsigned int i = 0; i < isosize / 0x9300; i++) {
         out.Write(&offset, 4);
         out.Write(&x, 4);
         out.Write(dummy, sizeof (dummy));
@@ -1082,16 +1082,16 @@ int convertIso() {
 
     offset = out.Tell();
 
-    for (uint i = 0; i < (header[9] + 0x100000) - offset; i++) {
+    for (unsigned int i = 0; i < (header[9] + 0x100000) - offset; i++) {
         out.Write("\0",1);
     }
 
     printf("Writing iso...\n");
 
     totSize = 0;
-    uint curSize=0;
+    unsigned int curSize=0;
     if (complevel == 0) {
-        uint i = 0;
+        unsigned int i = 0;
         if (convertInfo.srcIsPbp) {
             for (i = 0; i < blockCount; i++) {
                 bufferSize = popstripReadBlock(iso_index, i, (unsigned char*) buffer2);
@@ -1106,7 +1106,7 @@ int convertIso() {
                 out.Write(buffer2, bufferSize);
                 progress_perc=((double)(i)/blockCount)*100;
                 
-                cancelConvert=!progbar.Update((int)(progress_perc*99/100),wxString::Format("%.0f%% done converting: ",progress_perc));
+                cancelConvert=!progbar.Update((int)(progress_perc*99/100),wxString::Format(wxS("%.0f%% done converting: "),progress_perc));
                 if (cancelConvert) {
                     
                     in.Close();
@@ -1125,7 +1125,7 @@ int convertIso() {
                 curSize += x;
 
                 progress_perc=((double)(curSize)/isosize)*100;
-                cancelConvert=!progbar.Update((int)(progress_perc*99/100),wxString::Format("%.0f%% done converting: ",progress_perc));
+                cancelConvert=!progbar.Update((int)(progress_perc*99/100),wxString::Format(wxS("%.0f%% done converting: "),progress_perc));
                 
                 if (cancelConvert) {
                     
@@ -1138,7 +1138,7 @@ int convertIso() {
             }
         }
 
-        for (uint i = 0; i < (isosize - isorealsize); i++) {
+        for (unsigned int i = 0; i < (isosize - isorealsize); i++) {
             out.Write("\0",1);
         }
     } else {
@@ -1154,7 +1154,7 @@ int convertIso() {
             return popstationErrorExit(wxString::Format(wxS("Cannot alloc memory for indexes!\n")));
         }
 
-        uint i = 0;
+        unsigned int i = 0;
         //j = 0;
         offset = 0;
 
@@ -1182,7 +1182,7 @@ int convertIso() {
             
             //This time the input file is used to figure out the progress based on how many bytes read
             progress_perc=((double)(curSize)/isosize)*100;
-            cancelConvert=!progbar.Update((int)(progress_perc*99/100),wxString::Format("%.0f%% done converting: ",progress_perc));
+            cancelConvert=!progbar.Update((int)(progress_perc*99/100),wxString::Format(wxS("%.0f%% done converting: "),progress_perc));
             
             if (cancelConvert) {
 
@@ -1255,7 +1255,7 @@ int convertIso() {
     }
 
     printf("Writing special data...\n");
-    progbar.Update(99,wxString::Format("Writing special data..."));
+    progbar.Update(99,wxString::Format(wxS("Writing special data...")));
     base.Seek(base_header[9] + 12,wxFromStart);
     base.Read(&x, 4);
 
@@ -1281,7 +1281,7 @@ int convertIso() {
         out.Write(buffer, header[1]);
     } else {
         printf("Writing boot.png...\n");
-        progbar.Update(99,wxString::Format("Writing boot.png..."));
+        progbar.Update(99,wxString::Format(wxS("Writing boot.png...")));
         ib[5] = boot_size;
         out.Write(buffer, header[0]);
         t.Open(convertInfo.boot, wxS("rb"));
@@ -1297,7 +1297,7 @@ int convertIso() {
 
     if (complevel != 0) {
         printf("Updating compressed indexes...\n");
-        progbar.Update(99,wxString::Format("Updating compressed indexes..."));
+        progbar.Update(99,wxString::Format(wxS("Updating compressed indexes...")));
 
         out.Seek(p1_offset,wxFromStart);
         out.Write(&end_offset, 4);
@@ -1316,7 +1316,7 @@ int convertIso() {
     if (convertInfo.srcIsPbp) popstripFinal(iso_index);
 
     
-    progbar.Update(100,"Conversion Complete");
+    progbar.Update(100,wxS("Conversion Complete"));
     
     printf("Done\n");
     return 0;
