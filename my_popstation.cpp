@@ -18,7 +18,7 @@ class myPopstation: public wxApp{
 IMPLEMENT_APP(myPopstation)
 bool myPopstation::OnInit(){
     
-    popFrame* frame=new popFrame((wxFrame *)NULL, -1, wxS("MyPopstation"), wxPoint(-1,-1),
+    popFrame* frame=new popFrame((wxFrame *)NULL, -1, wxS("SodaPopStation"), wxPoint(-1,-1),
             wxSize(-1,-1), wxDEFAULT_FRAME_STYLE);
     frame->Center();
     frame->Show(TRUE);

@@ -31,7 +31,7 @@ gameDataDialog::gameDataDialog(wxWindow* parent, wxWindowID id, const wxString& 
     //line=new wxStaticLine(this,wxID_ANY,wxPoint(0,380),wxSize(-1,-1),wxLI_HORIZONTAL);
 
     gameName = new wxListBox(this, ID_gameTitle, wxPoint(0, 80), wxSize(300, 350),
-           wxArrayString(0), wxLB_SINGLE);
+           0,NULL, wxLB_SINGLE);
 
     gameID = new wxChoice(this, ID_gameID, wxPoint(330, 115), wxSize(75, 30));
     gameNum = new wxTextCtrl(this, ID_gameID, wxS(""), wxPoint(415, 115), wxSize(50, 30), 0, wxTextValidator(wxFILTER_NUMERIC));

@@ -1033,7 +1033,7 @@ int convertIso() {
         out.Write(&x,4);
     }
 
-    memcpy(data1 + 1, convertInfo.gameID, 4);
+    memcpy(data1 + 1, convertInfo.gameID.char_str(), 4);
     memcpy(data1 + 6, (char*)convertInfo.gameID.char_str() + 4, 5);
     /*
             offset = isorealsize/2352+150;
