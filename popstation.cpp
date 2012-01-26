@@ -36,8 +36,6 @@ unsigned int blockCount;//Holds the number of blocks if the source is PBP
 
 double progress_perc=0;
 
-int convertIso();
-int convertIsoMD();
 
 int popstationErrorExit(const wxString msg);
 
@@ -149,8 +147,7 @@ void SetSFOCode(char *sfo, wxString code) {
 int convertIsoMD() {
     wxFFile in, out, base, t;
     int offset;
-    unsigned int isosize, isorealsize,x;
-    char y;
+    unsigned int isosize, isorealsize;
     int index_offset, p1_offset, p2_offset, m_offset, end_offset;
     IsoIndex *indexes;
     int iso_positions[5];
@@ -167,32 +164,14 @@ int convertIsoMD() {
     int complevels[5];
     wxString BASE;
     wxString errorstring;
-    ndiscs = convertInfo.multiDiscInfo.fileCount;
-
-    inputs.Add(convertInfo.multiDiscInfo.srcISO[0]);
-    inputs.Add(convertInfo.multiDiscInfo.srcISO[1]);
-    inputs.Add(convertInfo.multiDiscInfo.srcISO[2]);
-    inputs.Add(convertInfo.multiDiscInfo.srcISO[3]);
-    inputs.Add(convertInfo.multiDiscInfo.srcISO[4]);
-
-    titles.Add(convertInfo.multiDiscInfo.gameTitle[0]);
-    titles.Add(convertInfo.multiDiscInfo.gameTitle[1]);
-    titles.Add(convertInfo.multiDiscInfo.gameTitle[2]);
-    titles.Add(convertInfo.multiDiscInfo.gameTitle[3]);
-    titles.Add(convertInfo.multiDiscInfo.gameTitle[4]);
-
-    codes.Add(convertInfo.multiDiscInfo.gameID[0]);
-    codes.Add(convertInfo.multiDiscInfo.gameID[1]);
-    codes.Add(convertInfo.multiDiscInfo.gameID[2]);
-    codes.Add(convertInfo.multiDiscInfo.gameID[3]);
-    codes.Add(convertInfo.multiDiscInfo.gameID[4]);
-
-    complevels[0] = convertInfo.multiDiscInfo.compLevel[0];
-    complevels[1] = convertInfo.multiDiscInfo.compLevel[1];
-    complevels[2] = convertInfo.multiDiscInfo.compLevel[2];
-    complevels[3] = convertInfo.multiDiscInfo.compLevel[3];
-    complevels[4] = convertInfo.multiDiscInfo.compLevel[4];
-
+    ndiscs = convertInfo.multiDiscInfo.fileCount;//ndisc contains the number of disc
+    for(int i = 0; i < ndiscs; ++i)
+		{
+	    inputs.Add(convertInfo.multiDiscInfo.srcISO[i]);
+	    titles.Add(convertInfo.multiDiscInfo.gameTitle[i]);
+	    codes.Add(convertInfo.multiDiscInfo.gameID[i]);
+	    complevels[i] = convertInfo.multiDiscInfo.compLevel[i];
+		}
     output = convertInfo.dstPBP;
     title = convertInfo.saveTitle;
     code = convertInfo.saveID;
@@ -225,9 +204,9 @@ int convertIsoMD() {
 
     sfo_size = base_header[3] - base_header[2];
 
-    wxString temp=convertInfo.icon0;
-    if(wxFileExists(temp)){
-    t.Open(temp, wxS("rb"));
+    wxString str=convertInfo.icon0;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()==true) {
         icon0_size = getsize(t);
         icon0 = 1;
@@ -237,9 +216,9 @@ int convertIsoMD() {
     }
     }
     
-    temp=convertInfo.icon1;
-    if(wxFileExists(temp)){
-    t.Open(convertInfo.icon1, wxS("rb"));
+    str=convertInfo.icon1;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()) {
         icon1_size = getsize(t);
         icon1 = 1;
@@ -249,9 +228,9 @@ int convertIsoMD() {
     }
     }
 	
-    temp=convertInfo.pic0;
-    if(wxFileExists(temp)){
-    t.Open(convertInfo.pic0, wxS("rb"));
+    str=convertInfo.pic0;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()==true) {
         pic0_size = getsize(t);
         pic0 = 1;
@@ -261,9 +240,9 @@ int convertIsoMD() {
     }
     }
     
-    temp=convertInfo.pic1;
-    if(wxFileExists(temp)){
-    t.Open(convertInfo.pic1, wxS("rb"));
+    str=convertInfo.pic1;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()==true) {
         pic1_size = getsize(t);
         pic1 = 1;
@@ -273,9 +252,9 @@ int convertIsoMD() {
     }
     }
     
-    temp=convertInfo.snd0;
-    if(wxFileExists(temp)){
-    t.Open(convertInfo.snd0, wxS("rb"));
+    str=convertInfo.snd0;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()==true) {
         snd_size = getsize(t);
         snd = 1;
@@ -285,9 +264,9 @@ int convertIsoMD() {
     }
     }
 
-    temp=convertInfo.boot;
-    if(wxFileExists(temp)){
-    t.Open(convertInfo.boot, wxS("rb"));
+    str=convertInfo.boot;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()==true) {
         boot_size = getsize(t);
         boot = 1;
@@ -297,9 +276,9 @@ int convertIsoMD() {
     }
     }
 
-    temp=convertInfo.data_psp;
-    if(wxFileExists(temp)){
-    t.Open(convertInfo.data_psp, wxS("rb"));
+    str=convertInfo.data_psp;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()==true) {
         prx_size = getsize(t);
         prx = 1;
@@ -337,13 +316,13 @@ int convertIsoMD() {
     curoffs += snd_size;
     header[8] = curoffs;
 
-    x = header[8] + prx_size;
+    int temp = header[8] + prx_size;
 
-    if ((x % 0x10000) != 0) {
-        x = x + (0x10000 - (x % 0x10000));
+    if ((temp % 0x10000) != 0) {
+        temp = temp + (0x10000 - (temp % 0x10000));
     }
 
-    header[9] = x;
+    header[9] = temp;
 
     out.Write(header, 0x28);
 
@@ -437,37 +416,37 @@ int convertIsoMD() {
     // Save this offset position
     p1_offset = out.Tell();;
 
-    WriteInteger(0, 2);
-    WriteInteger(0x2CC9C5BC, 1);
-    WriteInteger(0x33B5A90F, 1);
-    WriteInteger(0x06F6B4B3, 1);
-    WriteInteger(0xB25945BA, 1);
-    WriteInteger(0, 0x76);
+    WriteInteger(out, 0, 2);
+    WriteInteger(out, 0x2CC9C5BC, 1);
+    WriteInteger(out, 0x33B5A90F, 1);
+    WriteInteger(out, 0x06F6B4B3, 1);
+    WriteInteger(out, 0xB25945BA, 1);
+    WriteInteger(out, 0, 0x76);
 
     m_offset = out.Tell();
 
     memset(iso_positions, 0, sizeof (iso_positions));
     out.Write(iso_positions, sizeof (iso_positions));
 
-    WriteRandom(12);
-    WriteInteger(0, 8);
+    WriteRandom(out, 12);
+    WriteInteger(out, 0, 8);
 
     out.Write("_",1);
     out.Write((char*)code.char_str(),4);
     out.Write("_",1);
     out.Write((char*)code.char_str() + 4,5);
 
-    WriteChar(0, 0x15);
+    WriteChar(out, 0, 0x15);
 
     p2_offset = out.Tell();
-    WriteInteger(0, 2);
+    WriteInteger(out, 0, 2);
 
     out.Write(data3,sizeof(data3));
     out.Write((char*)title.char_str(),title.length());
 
-    WriteChar(0, 0x80 - title.length());
-    WriteInteger(7, 1);
-    WriteInteger(0, 0x1C);
+    WriteChar(out, 0, 0x80 - title.length());
+    WriteInteger(out, 7, 1);
+    WriteInteger(out, 0, 0x1C);
 
     //Get size of all isos
    
@@ -505,9 +484,9 @@ int convertIsoMD() {
         offset = out.Tell();
 
         if (offset % 0x8000) {
-            x = 0x8000 - (offset % 0x8000);
+            temp = 0x8000 - (offset % 0x8000);
 
-            WriteChar(0, x);
+            WriteChar(out, 0, temp);
 
         }
 
@@ -517,13 +496,13 @@ int convertIsoMD() {
 
         out.Write("PSISOIMG0000", 12);
 
-        WriteInteger(0, 0xFD);
+        WriteInteger(out, 0, 0xFD);
 
         memcpy(data1 + 1, (char*)codes[ciso].char_str(), 4);
         memcpy(data1 + 6, (char*)codes[ciso].char_str() + 4, 5);
         out.Write(data1, sizeof (data1));
 
-        WriteInteger(0, 1);
+        WriteInteger(out, 0, 1);
 
         strcpy((char*) (data2 + 8), (char*)titles[ciso].char_str());
         out.Write(data2, sizeof (data2));
@@ -537,14 +516,14 @@ int convertIsoMD() {
         offset = 0;
 
         if (complevels[ciso] == 0) {
-            x = 0x9300;
+            temp = 0x9300;
         } else {
-            x = 0;
+            temp = 0;
         }
 
         for (unsigned int i = 0; i < isosize / 0x9300; i++) {
             out.Write(&offset, 4);
-            out.Write(&x, 4);
+            out.Write(&temp, 4);
             out.Write(dummy, sizeof (dummy));
 
             if (complevels[ciso] == 0)
@@ -560,9 +539,9 @@ int convertIsoMD() {
         wxPrintf(wxS("Writing iso #%d (%s)...\n"), ciso + 1, inputs[ciso].c_str());
 
         if (complevels[ciso] == 0) {
-            while ((x = in.Read(buffer, 1048576)) > 0) {
-                out.Write(buffer, x);
-                curSize += x;
+            while ((temp = in.Read(buffer, 1048576)) > 0) {
+                out.Write(buffer, temp);
+                curSize += temp;
                 
                 progress_perc=((double)(curSize)/totSize)*100;
                 progbar.Update(progress_perc*((ciso+1)/ndiscs),wxString::Format(wxS("Writing iso #%d. %.0f%% done converting:  "),ciso, progress_perc));
@@ -593,16 +572,16 @@ int convertIsoMD() {
             unsigned int i = 0;
             offset = 0;
 
-            while ((x = in.Read(buffer2, 0x9300)) > 0) {
-                curSize += x;
+            while ((temp = in.Read(buffer2, 0x9300)) > 0) {
+                curSize += temp;
 
-                if (x < 0x9300) {
-                    memset(buffer2 + x, 0, 0x9300 - x);
+                if (temp < 0x9300) {
+                    memset(buffer2 + temp, 0, 0x9300 - temp);
                 }
 
-                x = deflateCompress(&z, buffer2, 0x9300, buffer, sizeof (buffer), complevels[ciso]);
+                temp = deflateCompress(&z, buffer2, 0x9300, buffer, sizeof (buffer), complevels[ciso]);
 
-                if (x < 0) {
+                if (temp < 0) {
                     
                     in.Close();
                     out.Close();
@@ -615,14 +594,14 @@ int convertIsoMD() {
 
                 indexes[i].offset = offset;
 
-                if (x >= 0x9300) /* Block didn't compress */ {
+                if (temp >= 0x9300) /* Block didn't compress */ {
                     indexes[i].length = 0x9300;
                     out.Write(buffer2, 0x9300);
                     offset += 0x9300;
                 } else {
-                    indexes[i].length = x;
-                    out.Write(buffer, x);
-                    offset += x;
+                    indexes[i].length = temp;
+                    out.Write(buffer, temp);
+                    offset += temp;
                 }
 
                 progress_perc=((double)(curSize)/totSize)*100;
@@ -662,16 +641,16 @@ int convertIsoMD() {
         in.Close();
     }
 
-    x = out.Tell();
+    temp = out.Tell();
 
-    if ((x % 0x10) != 0) {
-        end_offset = x + (0x10 - (x % 0x10));
+    if ((temp % 0x10) != 0) {
+        end_offset = temp + (0x10 - (temp % 0x10));
 
-        for (unsigned int i = 0; i < (end_offset - x); i++) {
-            out.Write("0",1);
+        for (unsigned int i = 0; i < (end_offset - temp); i++) {
+            out.Write('0');
         }
     } else {
-        end_offset = x;
+        end_offset = temp;
     }
 
     end_offset -= header[9];
@@ -679,11 +658,11 @@ int convertIsoMD() {
     printf("Writing special data...\n");
     progbar.Update(99,wxString::Format(wxS("Writing special data...")));
     base.Seek(base_header[9] + 12,wxFromStart);
-    base.Read(&x, 4);
+    base.Read(&temp, 4);
 
-    x += 0x50000;
+    temp += 0x50000;
 
-    base.Seek(x,wxFromStart);
+    base.Seek(temp, wxFromStart);
     base.Read(buffer, 8);
 
     if (memcmp(buffer, "STARTDAT", 8) != 0) {
@@ -692,9 +671,9 @@ int convertIsoMD() {
         return popstationErrorExit(errorstring);
     }
 
-    base.Seek(x + 16,wxFromStart);
+    base.Seek(temp + 16, wxFromStart);
     base.Read(header, 8);
-    base.Seek(x,wxFromStart);
+    base.Seek(temp, wxFromStart);
     base.Read(buffer, header[0]);
 
     if (!boot) {
@@ -715,8 +694,8 @@ int convertIsoMD() {
 
     //fseek(base, x, SEEK_SET);
 
-    while ((x = base.Read(buffer, 1048576) )> 0) {
-        out.Write(buffer, x);
+    while ((temp = base.Read(buffer, 1048576) )> 0) {
+        out.Write(buffer, temp);
     }
     out.Seek(p1_offset,wxFromStart);
     out.Write(&end_offset,4);
@@ -732,7 +711,6 @@ int convertIsoMD() {
     base.Close();
 
     progbar.Update(100,wxS("Conversion Complete"));
-    progbar.EndModal(wxID_OK);
     printf("Done\n");
     return 0;
 }
@@ -826,9 +804,9 @@ int convertIso() {
 
     sfo_size = base_header[3] - base_header[2];
 
-    wxString temp=convertInfo.icon0;
-    if(wxFileExists(temp)){
-    t.Open(temp, wxS("rb"));
+    wxString str=convertInfo.icon0;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()==true) {
         icon0_size = getsize(t);
         icon0 = 1;
@@ -838,9 +816,9 @@ int convertIso() {
     }
     }
     
-    temp=convertInfo.icon1;
-    if(wxFileExists(temp)){
-    t.Open(temp, wxS("rb"));
+    str=convertInfo.icon1;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()==true) {
         icon1_size = getsize(t);
         icon1 = 1;
@@ -850,9 +828,9 @@ int convertIso() {
     }
     }
 	
-    temp=convertInfo.pic0;
-    if(wxFileExists(temp)){
-    t.Open(temp, wxS("rb"));
+    str=convertInfo.pic0;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()==true) {
         pic0_size = getsize(t);
         pic0 = 1;
@@ -862,9 +840,9 @@ int convertIso() {
     }
     }
     
-    temp=convertInfo.pic1;
-    if(wxFileExists(temp)){
-    t.Open(temp, wxS("rb"));
+    str=convertInfo.pic1;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()==true) {
         pic1_size = getsize(t);
         pic1 = 1;
@@ -874,9 +852,9 @@ int convertIso() {
     }
     }
     
-    temp=convertInfo.snd0;
-    if(wxFileExists(temp)){
-    t.Open(temp, wxS("rb"));
+    str=convertInfo.snd0;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()==true) {
         snd_size = getsize(t);
         snd = 1;
@@ -886,9 +864,9 @@ int convertIso() {
     }
     }
 
-    temp=convertInfo.boot;
-    if(wxFileExists(temp)){
-    t.Open(temp, wxS("rb"));
+    str=convertInfo.boot;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()==true) {
         boot_size = getsize(t);
         boot = 1;
@@ -898,9 +876,9 @@ int convertIso() {
     }
     }
 
-    temp=convertInfo.data_psp;
-    if(wxFileExists(temp)){
-    t.Open(temp, wxS("rb"));
+    str=convertInfo.data_psp;
+    if(wxFileExists(str)){
+    t.Open(str, wxS("rb"));
     if (t.IsOpened()==true) {
         prx_size = getsize(t);
         prx = 1;

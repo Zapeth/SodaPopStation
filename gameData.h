@@ -9,7 +9,6 @@
 #include "wx/srchctrl.h"
 #include "header.h"
 
-const int num_of_elements_shown_in_LB=14;//Number of Elements shown in Listbox.Used for pageup and pagedown
 enum{
     tGameID=0,
     tSaveFolder=1,

@@ -1,19 +1,24 @@
-#define WriteInteger(a, c) \
-	x = a; \
-	for (unsigned int i = 0; i < c; i++) \
-		out.Write(&x,4)
+inline void WriteInteger(wxFFile& out, unsigned int num, int count)
+{
+	
+	for ( int i = 0; i < count; i++) 
+		out.Write(&num,4);
+}
 
-#define WriteChar(a, c) \
-	y = a; \
-	for (unsigned int i = 0; i < c; i++) \
-		out.Write(&x,1)
+inline void WriteChar(wxFFile& out, unsigned char num, int count)
+{
+	for ( int i = 0; i < count; i++)
+		out.Write(&num,1);
+}
 
-#define WriteRandom(c) \
-	for (unsigned int i = 0; i < c; i++) \
-	{ \
-		x = rand(); \
-		out.Write(&x,4); \
+inline void WriteRandom(wxFFile& out, int count)
+{
+	for (int i = 0; i < count; i++)
+	{ 
+		unsigned int num = rand(); 
+		out.Write(&num,4); 
 	}
+}
 
 
 struct  SFOHeader
@@ -49,7 +54,7 @@ struct PatchData{
 } ;
 
 struct MultiDiscInfo{
-	char fileCount;
+	int fileCount;
 	wxArrayString srcISO;
 	wxArrayString gameTitle;
 	wxArrayString gameID;
@@ -61,7 +66,7 @@ struct ConvertIsoInfo{
 	wxString base;
 	wxString data_psp;
 	wxString srcISO;
-        wxString dstPBP;
+  wxString dstPBP;
 	wxString pic0;
 	wxString pic1;
 	wxString icon0;
@@ -69,7 +74,7 @@ struct ConvertIsoInfo{
 	wxString snd0;
 	wxString boot;
 	bool srcIsPbp;
-        bool isMultiDisc;
+  bool isMultiDisc;
 	wxString gameTitle;
 	wxString saveTitle;
 	wxString gameID;

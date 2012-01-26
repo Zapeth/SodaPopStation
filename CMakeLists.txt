@@ -2,11 +2,12 @@ cmake_minimum_required(VERSION 2.8)
 PROJECT(SodaPopStation CXX)
 SET(SodaPopStation_VERSION_MAJOR 0)
 SET(SodaPopStation_VERSION_MINOR 1)
-SET(CMAKE_CXX_COMPILER g++)
-SET(CMAKE_CXX_FLAGS_DEBUG "-g")
+SET(CMAKE_CXX_COMPILER /usr/local/bin/g++)
+SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall")
 
 #FIND_PACKAGE(FindZLIB)
 SET(ZLIB_LIBRARIES "-lz")
+SET(SQLITE3_LIBRARIES "-lsqlite3")
 
 
 execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion
@@ -21,8 +22,9 @@ if (wxWidgets_FOUND)
                    OUTPUT_VARIABLE  wxWidgets_CXX_FLAGS)
   STRING(STRIP ${wxWidgets_CXX_FLAGS} wxWidgets_CXX_FLAGS)
   SET(CMAKE_CXX_FLAGS "-std=c++0x ${wxWidgets_CXX_FLAGS}")
-  ADD_EXECUTABLE(SodaPopStation my_popstation.cpp gameData.cpp popstrip.cpp popstation.cpp popstationGUI.cpp config.cpp popstationGUI.h gameData.h header.h config.h data.h popstrip.h)
-	TARGET_LINK_LIBRARIES(SodaPopStation ${ZLIB_LIBRARIES} ${wxWidgets_LIBRARIES})
+  ADD_EXECUTABLE(SodaPopStation my_popstation.cpp gameData.cpp popstrip.cpp popstation.cpp popstationGUI.cpp 
+  	config.cpp popstationGUI.h gameData.h header.h config.h data.h popstrip.h wxSqlite3.h wxSqlite3.cpp)
+	TARGET_LINK_LIBRARIES(SodaPopStation ${ZLIB_LIBRARIES} ${SQLITE3_LIBRARIES} ${wxWidgets_LIBRARIES})
 else()
    MESSAGE("wxWidgets not found!")
 endif()

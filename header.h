@@ -4,7 +4,7 @@
 #include "wx/string.h"
 #include "wx/arrstr.h"
 
-typedef struct{
+struct gameData{
     wxString saveIDcode;
     wxString saveIDnum;
     wxString saveID;
@@ -15,9 +15,9 @@ typedef struct{
     wxString gameIDnum;
     wxString gameID;
     int compressionLevel;
-} gameData;
+};
 
-typedef struct{
+struct settings{
     int compressionLevel;//Default Compression Level
     wxString customIcon0;
     wxString customPic0;
@@ -36,9 +36,8 @@ typedef struct{
     wxString snd0file;
     wxString bootfile;
 
-} settings;
-
-typedef struct{
+};
+struct gameDataList{
     wxArrayString gameIDcode;
     wxArrayString gameIDnum;
     wxArrayString saveIDcode;
@@ -49,6 +48,6 @@ typedef struct{
     wxArrayString gameTitle;
     wxArrayString videoFormat;
     wxArrayString scannerID;//The gameID
-} gameDataList;
+};
 
 #endif

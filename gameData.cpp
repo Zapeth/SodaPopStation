@@ -72,7 +72,7 @@ void gameDataDialog::generateGameList() {
     gameInfo.scannerID.Alloc(10152);
     gameInfo.videoFormat.Alloc(10152);
 
-    wxFileInputStream input(wxS("gameInfo.db"));
+    wxFileInputStream input(wxS("gameinfo.txt"));
 
     if (!input.IsOk() || input.Eof()) {
         Close();
@@ -80,8 +80,6 @@ void gameDataDialog::generateGameList() {
     }
 
     wxTextInputStream infile(input);
-    for (int i = 0; i < 9; ++i)
-        infile.ReadLine();
 
     wxString dataline;
     wxArrayString lineTokenizer;
@@ -149,26 +147,14 @@ void gameDataDialog::onOK(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void gameDataDialog::onChar(wxKeyEvent& event) {
-  /*  if (event.GetKeyCode() == WXK_DOWN && gameID->m_hasFocus) {
-        int selection = 0;
-        selection = gameID->GetCurrentSelection();
-        if (selection < (gameID->GetCount() - 1))
-            gameID->SetSelection(++selection);
-
-    } else if (event.GetKeyCode() == WXK_UP && gameID->m_hasFocus) {
-        int selection = 0;
-        selection = gameID->GetCurrentSelection();
-        if (selection > 0)
-            gameID->SetSelection(--selection);
-
-    } else */if (gameName->GetId()==windowWithFocus) {
+if (gameName->GetId()==windowWithFocus) {
         wxString text_to_search = (wxChar) event.GetKeyCode();
         int selection = 0;
         selection = gameName->GetSelection();
         int count = gameName->GetCount();
 
         if (count != 0) {
-            for (int i = selection + 1; i != selection; i = ++i % count) {
+            for (int i = selection + 1; i != selection; i = (i+1) % count) {
                 wxString choice = gameName->GetString(i).Lower();
 
                 if (choice.StartsWith(text_to_search)) {
@@ -195,11 +181,10 @@ void gameDataDialog::Search(wxCommandEvent& event) {
     int count = gameName->GetCount();
 
     if (count != 0) {
-        for (int i = selection + 1; i != selection; i = ++i % count) {
+        for (int i = selection + 1; i != selection; i = (i+1) % count) {
             wxString choice = gameName->GetString(i).Lower();
 
             if (choice.StartsWith(text_to_search)) {
-                //std::cout <<(char*)choice.char_str()<<'\n';
                 gameName->SetSelection(i);
                 selectedInfo = gameName->GetSelection();
                 int result = gameID->FindString(gameInfo.gameIDcode[selectedInfo]);

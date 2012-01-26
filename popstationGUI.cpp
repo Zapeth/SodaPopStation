@@ -67,9 +67,10 @@ void popFrame::MainPage() {
     FileSelection.Add(wxS("Disc 4 - No File Selected"));
     FileSelection.Add(wxS("Disc 5 - No File Selected"));
     PSfiletext = new wxChoice(MyPanel, ID_PSfile, wxPoint(15, 45), wxSize(200, 25), FileSelection, wxCB_DROPDOWN);
+    PSfiletext->SetSelection(0);
     PSfiletext->Disable();
     //Emptys file selection array and sets compressionLevel to config file
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < (int)PSfiletext->GetCount(); ++i) {
         popParm[i].compressionLevel = configoptions.compressionLevel;
         FileSelection[i].Empty();
     }
@@ -127,7 +128,7 @@ void popFrame::MainPage() {
 }
 
 void popFrame::ExtraPage() {
-    ExtraPanel = ExtraPanel = new wxPanel(MyNotebook, wxID_ANY, wxPoint(-1, -1), wxSize(600, 400), wxTAB_TRAVERSAL);
+    ExtraPanel = new wxPanel(MyNotebook, wxID_ANY, wxPoint(-1, -1), wxSize(600, 400), wxTAB_TRAVERSAL);
     ExtraSizer = new wxGridBagSizer(5, 5);
     IconImage = new wxStaticBoxSizer(wxHORIZONTAL, ExtraPanel, wxS("ICON0.png"));
     BackImage = new wxStaticBoxSizer(wxHORIZONTAL, ExtraPanel, wxS("PIC1.png"));
@@ -191,6 +192,8 @@ KingSquitter - His PSX2PSP source code for popsation and popstrip helped immense
 void popFrame::onPSButton(wxCommandEvent& WXUNUSED(event)) {
     if (infileDialog->ShowModal() == wxID_OK) {
         int CurrentDisc = PSfiletext->GetCurrentSelection();//CurrentDisc holds the the disc that is currently selected
+        if(CurrentDisc == wxNOT_FOUND)
+        	return;
         wxString ISOname;
         ISOname.Printf(wxS("Disc %d - "), CurrentDisc + 1);
 
@@ -211,7 +214,7 @@ void popFrame::onOutputPBP(wxCommandEvent& WXUNUSED(event)) {
 void popFrame::onConvert(wxCommandEvent& WXUNUSED(event)) {
     int num_of_disc_to_convert = 0;
     wxString temp;
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < (long)FileSelection.GetCount(); ++i)
         if (!FileSelection[i].IsEmpty())
             num_of_disc_to_convert++;
 
@@ -294,7 +297,7 @@ void popFrame::onConvert(wxCommandEvent& WXUNUSED(event)) {
     }        //MultiDisc Game
     else {
         convertInfo.isMultiDisc = true;
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < num_of_disc_to_convert; ++i) {
             temp = FileSelection[i];
 
             //If a file exist in this slot then proceed to add it to the multidisc info
@@ -334,7 +337,7 @@ void popFrame::gameidDetection(const wxString source_file, int CurrentDisc) {
     wxArrayString prefixlist = gdDialog->PrefixList();
     bool gameid_found = false;
     size_t find_position;
-    //Read from input file in increaments 16 bytes until the gameid is found or 16 bytes can no longer be rea
+    //Read from input file in increaments 16 bytes until the gameid is found or 16 bytes can no longer be read
     while (infile.Read(buffer, 16) == 16) {
         
         filedata = filedata.Right(16)+wxString::From8BitData(buffer,16);
@@ -409,7 +412,7 @@ void popFrame::onGDialog(wxCommandEvent& WXUNUSED(event)) {
 void popFrame::onKeyPress(wxKeyEvent& event) {
     if (event.GetKeyCode() == WXK_DOWN && PSfiletext->GetId()==windowWithFocus) {
         int CurrentDisc = PSfiletext->GetCurrentSelection();
-        CurrentDisc = (1 + CurrentDisc) % 5;
+        CurrentDisc = (1 + CurrentDisc) % PSfiletext->GetCount();
         PSfiletext->SetSelection(CurrentDisc);
         DiscTitle->SetValue(popParm[CurrentDisc].gameTitle);
         DiscIDcode->SetValue(popParm[CurrentDisc].gameIDcode);
@@ -419,7 +422,7 @@ void popFrame::onKeyPress(wxKeyEvent& event) {
         int CurrentDisc = PSfiletext->GetCurrentSelection();
         CurrentDisc--;
         if (CurrentDisc < 0)
-            CurrentDisc = 4;
+            CurrentDisc = PSfiletext->GetCount() - 1;
         PSfiletext->SetSelection(CurrentDisc);
 
         DiscTitle->SetValue(popParm[CurrentDisc].gameTitle);
@@ -556,7 +559,7 @@ void popFrame::onBootImage(wxCommandEvent& event) {
 void popFrame::onExtract(wxCommandEvent& event) {
     int num_of_disc_to_convert = 0;
     wxString srcPBP, outISO;
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < (long)FileSelection.GetCount(); ++i)
         if (!FileSelection[i].IsEmpty())
             num_of_disc_to_convert++;
     if (num_of_disc_to_convert == 0) {

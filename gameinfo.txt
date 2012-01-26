@@ -1,12 +1,3 @@
-Popstation GUI GameID Database
-Created by SeattleMan
-www.SonyIndex.com
-Updated 1/10/2007 1:08:45 AM (PST)
-
-
-
-Game ID;Eboot Save Folder;Eboot Save Description;Game Name;Video Format;Scanner ID
-
 SLUS-01272;SLUS01272;007 - The World is not Enough [NTSC-U];007 - The World is not Enough [NTSC-U];NTSC;SLUS01272
 SLUS-00975;SLUS00975;007 - Tomorrow Never Dies [NTSC-U];007 - Tomorrow Never Dies [NTSC-U];NTSC;SLUS00975
 SLUS-01300;SLUS01300;007 Racing [NTSC-U];007 Racing [NTSC-U];NTSC;SLUS01300
